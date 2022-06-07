@@ -41,11 +41,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.PublicKey;
 import java.text.ParseException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 @IOIntensive
 public abstract class GenerateBase extends EncryptedJoseBase implements Execution {
@@ -170,6 +173,16 @@ public abstract class GenerateBase extends EncryptedJoseBase implements Executio
     return getTimeIntervalString(msgCtxt, "not-before");
   }
 
+  private SecretKey getCEK(MessageContext msgCtxt) throws Exception {
+    String encodedKey = _getOptionalString(msgCtxt, "cek");
+    if(encodedKey != null) {
+      byte[] decodedKey = Base64.getDecoder().decode(encodedKey);
+      return new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES"); 
+    } else {
+      return null;
+    }
+  }
+
   abstract void encrypt(PolicyConfig policyConfig, MessageContext msgCtxt) throws Exception;
 
   static class PolicyConfig {
@@ -186,6 +199,7 @@ public abstract class GenerateBase extends EncryptedJoseBase implements Executio
     public String outputVar;
     public int expiry;
     public int notBefore;
+    public SecretKey cek;
   }
 
   PolicyConfig getPolicyConfig(MessageContext msgCtxt) throws Exception {
@@ -208,6 +222,7 @@ public abstract class GenerateBase extends EncryptedJoseBase implements Executio
     config.notBefore = getNotBefore(msgCtxt);
     config.generateId = _getBooleanProperty(msgCtxt, "generate-id", false);
     config.compress = _getBooleanProperty(msgCtxt, "compress", false);
+    config.cek = getCEK(msgCtxt);
     return config;
   }
 

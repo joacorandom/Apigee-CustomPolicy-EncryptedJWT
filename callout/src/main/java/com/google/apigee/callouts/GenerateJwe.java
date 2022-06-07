@@ -32,6 +32,8 @@ import com.nimbusds.jose.crypto.RSAEncrypter;
 import com.nimbusds.jose.util.JSONObjectUtils;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Map;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 @IOIntensive
 public class GenerateJwe extends GenerateBase implements Execution {
@@ -83,7 +85,14 @@ public class GenerateJwe extends GenerateBase implements Execution {
     msgCtxt.setVariable(varName("header"), header.toString());
 
     JWEObject jwe = new JWEObject(header, new Payload(policyConfig.payload));
-    RSAEncrypter encrypter = new RSAEncrypter((RSAPublicKey) policyConfig.publicKey);
+    RSAEncrypter encrypter = null;
+
+    if(policyConfig.cek != null) {
+      msgCtxt.setVariable(varName("cek"), policyConfig.cek.toString());
+      encrypter = new RSAEncrypter((RSAPublicKey) policyConfig.publicKey, policyConfig.cek);
+    } else {
+      encrypter = new RSAEncrypter((RSAPublicKey) policyConfig.publicKey);
+    }
 
     jwe.encrypt(encrypter);
     String serialized = jwe.serialize();

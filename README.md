@@ -1,3 +1,33 @@
+ # This is a fork of Dino Chiesa's Apigee-CustomPolicy-EncryptedJWT
+
+This if a fork of [Dino Chiesa's implementation](https://github.com/DinoChiesa/Apigee-CustomPolicy-EncryptedJWT).
+
+Changes over original implementation:
+
+* added support for JWT Encryption using CEK optionally.
+* changed mocking library from `com.googlecode.jmockit.jmockit` to `org.jmockit.jmockit` to being able to run tests and compile under openjdk8.
+
+# Additional example of using CEK parameter for encryption
+  ```xml
+  <JavaCallout name="Java-JWTGeneration">
+    <Properties>
+      <Property name='key-encryption'>RSA-OAEP-256</Property>
+      <Property name='content-encryption'>A256GCM</Property>
+      <Property name='payload'>{ "sub":"joaquin", "unk":"600c3efa-e48e-49c8-b6d9-e6bb9b94ad52"}</Property>
+      <Property name='expiry'>1h</Property>
+      <!-- the context variable "my_public_key" must hold a PEM-encoded RSA public key -->
+      <Property name='public-key'>{my_public_key}</Property>
+      
+      <!-- CEK is 256 bit base64 String -->
+      <Property name='public-key'>{cek}</Property>
+    </Properties>
+    <ClassName>com.google.apigee.callouts.GenerateEncryptedJwt</ClassName>
+    <ResourceURL>java://apigee-callout-encrypted-jwt-20211021.jar</ResourceURL>
+  </JavaCallout>
+  ```
+  
+# Additional example of using CEK parameter for decryption
+
  # JWE and Encrypted JWT callout
 
 For several years, Apigee has included builtin  policies that generate and
@@ -451,6 +481,10 @@ with the organization or environment.
 
 Dino Chiesa    
 godino@google.com
+
+## Fork Author
+Joaquín Salazar
+joaquin.salazar.zegers@gmail.com
 
 ## Bugs & Limitations
 

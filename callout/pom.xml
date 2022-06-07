@@ -15,7 +15,7 @@
     <apigee.message.flow.version>1.0.0</apigee.message.flow.version>
     <mockito.all.version>1.10.19</mockito.all.version>
     <testng.version>6.8.7</testng.version> <!-- current: 6.9.4 -->
-    <jmockit.version>1.7</jmockit.version>
+    <jmockit.version>1.36.3</jmockit.version>
     <caffeine.version>2.9.0</caffeine.version>
     <nimbus-jose.version>8.22</nimbus-jose.version>
     <bouncycastle.version>1.67</bouncycastle.version>
@@ -71,7 +71,7 @@
     </dependency>
 
     <dependency>
-      <groupId>com.googlecode.jmockit</groupId>
+      <groupId>org.jmockit</groupId>
       <artifactId>jmockit</artifactId>
       <version>${jmockit.version}</version>
       <scope>test</scope>

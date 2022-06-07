@@ -88,6 +88,7 @@ public class VerifyEncryptedJwt extends VerifyBase implements Execution {
   }
 
   void decrypt(PolicyConfig policyConfig, MessageContext msgCtxt) throws Exception {
+    //TODO: Add CEK Support
     Object v = msgCtxt.getVariable(policyConfig.source);
     if (v == null) throw new IllegalStateException("Cannot find JWT within source.");
     String jweText = (String) v;
