@@ -479,14 +479,13 @@ public class TestEncrypt extends CalloutTestBase {
 
 
   @Test()
-  public void encrypt13_with_CEK() {
+  public void encrypt13_with_CEK_128bits() {
     Map<String, String> properties = new HashMap<String, String>();
     properties.put("testname", "encrypt13");
     properties.put("public-key", publicKey1);
-    properties.put("key-encryption", "RSA-OAEP-256");
-    properties.put("content-encryption", "A256GCM");
-    properties.put("cek","b8IyKQFiLw+Hk1mHKqyLFadK1SnMbcw4jYI3DxYVZk0=");
-
+    properties.put("key-encryption", "RSA-OAEP");
+    properties.put("content-encryption", "A128GCM");
+    properties.put("cek", cek_128bit);
     properties.put("debug", "true");
     properties.put(
         "payload",
@@ -503,7 +502,32 @@ public class TestEncrypt extends CalloutTestBase {
     Assert.assertNull(error);
     String output = msgCtxt.getVariable("ejwt_output");
     Assert.assertNotNull(output);
+  }
 
+  @Test()
+  public void encrypt14_with_CEK_256bits() {
+    Map<String, String> properties = new HashMap<String, String>();
+    properties.put("testname", "encrypt14");
+    properties.put("public-key", publicKey1);
+    properties.put("key-encryption", "RSA-OAEP-256");
+    properties.put("content-encryption", "A256GCM");
+    properties.put("cek", cek_256bit);
+    properties.put("debug", "true");
+    properties.put(
+        "payload",
+        "{ \"sub\": \"dino\", \"something\" : \"D6B455B4-D252-4F4B-82B3-DA908FDB5BD3\"}");
+
+    GenerateEncryptedJwt callout = new GenerateEncryptedJwt(properties);
+    ExecutionResult result = callout.execute(msgCtxt, exeCtxt);
+
+    // check result and output
+    reportThings("ejwt", properties);
+    Assert.assertEquals(result, ExecutionResult.SUCCESS);
+    // retrieve output
+    String error = msgCtxt.getVariable("ejwt_error");
+    Assert.assertNull(error);
+    String output = msgCtxt.getVariable("ejwt_output");
+    Assert.assertNotNull(output);
   }
 
 }

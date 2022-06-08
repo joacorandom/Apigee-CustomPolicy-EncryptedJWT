@@ -65,8 +65,7 @@ public class TestDecrypt extends CalloutTestBase {
   }
 
   @Test()
-  public void decrypt2_with_CEK() {
-    //TODO: Add decryption with CEK support
+  public void decrypt2_with_private_key() {
     Map<String, String> properties = new HashMap<String, String>();
     properties.put("testname", "decrypt2");
     properties.put("private-key", privateKey2);
@@ -302,4 +301,49 @@ public class TestDecrypt extends CalloutTestBase {
         error2, "the JWT has an unlimited lifetime which exceeds the configured limit.");
   }
   
+  @Test()
+  public void decrypt9_with_CEK_128bit() {
+    Map<String, String> properties = new HashMap<String, String>();
+    properties.put("testname", "decrypt9");
+    properties.put("private-key", privateKey1);
+    properties.put("key-encryption", "RSA-OAEP");
+    //properties.put("cek", cek_128bit);
+    properties.put("source", "message.content");
+    properties.put("debug", "true");
+
+    msgCtxt.setVariable("message.content", jwe_cek_128bit);
+
+    VerifyEncryptedJwt callout = new VerifyEncryptedJwt(properties);
+    ExecutionResult result = callout.execute(msgCtxt, exeCtxt);
+
+    // check result and output
+    reportThings("ejwt", properties);
+    Assert.assertEquals(result, ExecutionResult.SUCCESS);
+    // retrieve output
+    //String error = msgCtxt.getVariable("ejwt_error");
+    //Assert.assertEquals(error, "JWT uses unacceptable Content Encryption Algorithm.");
+  }
+
+  @Test()
+  public void decrypt10_with_CEK_256bit() {
+    Map<String, String> properties = new HashMap<String, String>();
+    properties.put("testname", "decrypt10");
+    properties.put("private-key", privateKey1);
+    properties.put("key-encryption", "RSA-OAEP-256");
+    //properties.put("cek", cek_256bit);
+    properties.put("source", "message.content");
+    properties.put("debug", "true");
+
+    msgCtxt.setVariable("message.content", jwe_cek_256bit);
+
+    VerifyEncryptedJwt callout = new VerifyEncryptedJwt(properties);
+    ExecutionResult result = callout.execute(msgCtxt, exeCtxt);
+
+    // check result and output
+    reportThings("ejwt", properties);
+    Assert.assertEquals(result, ExecutionResult.SUCCESS);
+    // retrieve output
+    //String error = msgCtxt.getVariable("ejwt_error");
+    //Assert.assertEquals(error, "JWT uses unacceptable Content Encryption Algorithm.");
+  }
 }

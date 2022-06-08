@@ -1,6 +1,6 @@
  # This is a fork of Dino Chiesa's Apigee-CustomPolicy-EncryptedJWT
 
-This if a fork of [Dino Chiesa's implementation](https://github.com/DinoChiesa/Apigee-CustomPolicy-EncryptedJWT).
+This is a fork of [Dino Chiesa's implementation](https://github.com/DinoChiesa/Apigee-CustomPolicy-EncryptedJWT).
 
 Changes over original implementation:
 
@@ -19,7 +19,7 @@ Changes over original implementation:
       <Property name='public-key'>{my_public_key}</Property>
       
       <!-- CEK is 256 bit base64 String -->
-      <Property name='public-key'>{cek}</Property>
+      <Property name='cek'>{cek}</Property>
     </Properties>
     <ClassName>com.google.apigee.callouts.GenerateEncryptedJwt</ClassName>
     <ResourceURL>java://apigee-callout-encrypted-jwt-20211021.jar</ResourceURL>

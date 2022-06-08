@@ -24,9 +24,12 @@ import com.apigee.flow.message.MessageContext;
 import com.google.apigee.util.CalloutUtil;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Base64;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 @IOIntensive
 public abstract class EncryptedJoseBase {
@@ -179,6 +182,16 @@ public abstract class EncryptedJoseBase {
       msgCtxt.setVariable(varName("error"), matcher.group(2));
     } else {
       msgCtxt.setVariable(varName("error"), error);
+    }
+  }
+  
+  public SecretKey getCEK(MessageContext msgCtxt) throws Exception {
+    String encodedKey = _getOptionalString(msgCtxt, "cek");
+    if(encodedKey != null) {
+      byte[] decodedKey = Base64.getDecoder().decode(encodedKey);
+      return new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES"); 
+    } else {
+      return null;
     }
   }
 }

@@ -26,7 +26,9 @@ import com.apigee.flow.execution.IOIntensive;
 import com.apigee.flow.execution.spi.Execution;
 import com.apigee.flow.message.MessageContext;
 import com.google.apigee.util.TimeResolver;
+import com.nimbusds.jose.JWEDecrypter;
 import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.crypto.DirectDecrypter;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -88,7 +90,6 @@ public class VerifyEncryptedJwt extends VerifyBase implements Execution {
   }
 
   void decrypt(PolicyConfig policyConfig, MessageContext msgCtxt) throws Exception {
-    //TODO: Add CEK Support
     Object v = msgCtxt.getVariable(policyConfig.source);
     if (v == null) throw new IllegalStateException("Cannot find JWT within source.");
     String jweText = (String) v;
@@ -96,9 +97,15 @@ public class VerifyEncryptedJwt extends VerifyBase implements Execution {
       jweText = jweText.substring(7);
     }
     EncryptedJWT encryptedJWT = EncryptedJWT.parse(jweText);
-    RSADecrypter decrypter =
-        new RSADecrypter(policyConfig.privateKey, policyConfig.deferredCritHeaders);
-    encryptedJWT.decrypt(decrypter);
+    JWEDecrypter decrypter = null;
+    if(policyConfig.cek != null) {
+      decrypter = new DirectDecrypter(policyConfig.cek, true);
+      encryptedJWT.decrypt(decrypter);
+    } else {
+      decrypter = new RSADecrypter(policyConfig.privateKey, policyConfig.deferredCritHeaders);
+      encryptedJWT.decrypt(decrypter);
+    }
+
     if (encryptedJWT.getPayload() != null) {
       String payload = encryptedJWT.getPayload().toString();
       msgCtxt.setVariable(varName("payload"), payload);

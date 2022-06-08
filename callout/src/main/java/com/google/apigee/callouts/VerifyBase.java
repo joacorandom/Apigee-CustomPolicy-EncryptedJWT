@@ -35,6 +35,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.crypto.SecretKey;
+
 @IOIntensive
 public abstract class VerifyBase extends EncryptedJoseBase implements Execution {
   public VerifyBase(Map properties) {
@@ -71,6 +73,7 @@ public abstract class VerifyBase extends EncryptedJoseBase implements Execution 
     public RSAPrivateKey privateKey;
     public Set<String> deferredCritHeaders;
     public String source;
+    public SecretKey cek;
   }
 
   PolicyConfig getPolicyConfiguration(MessageContext msgCtxt) throws Exception {
@@ -80,6 +83,7 @@ public abstract class VerifyBase extends EncryptedJoseBase implements Execution 
     config.privateKey = (RSAPrivateKey) getPrivateKey(msgCtxt);
     config.deferredCritHeaders = getDeferredCriticalHeaders(msgCtxt);
     config.source = getSourceVar();
+    config.cek = getCEK(msgCtxt);
     return config;
   }
 

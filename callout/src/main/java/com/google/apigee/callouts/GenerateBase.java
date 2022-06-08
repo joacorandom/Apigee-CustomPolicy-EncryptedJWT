@@ -48,7 +48,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 @IOIntensive
 public abstract class GenerateBase extends EncryptedJoseBase implements Execution {
@@ -171,16 +170,6 @@ public abstract class GenerateBase extends EncryptedJoseBase implements Executio
 
   private int getNotBefore(MessageContext msgCtxt) throws Exception {
     return getTimeIntervalString(msgCtxt, "not-before");
-  }
-
-  private SecretKey getCEK(MessageContext msgCtxt) throws Exception {
-    String encodedKey = _getOptionalString(msgCtxt, "cek");
-    if(encodedKey != null) {
-      byte[] decodedKey = Base64.getDecoder().decode(encodedKey);
-      return new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES"); 
-    } else {
-      return null;
-    }
   }
 
   abstract void encrypt(PolicyConfig policyConfig, MessageContext msgCtxt) throws Exception;
