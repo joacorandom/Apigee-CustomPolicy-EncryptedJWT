@@ -38,6 +38,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Map;
 
+import com.google.apigee.util.KeyUtil;
+
 @IOIntensive
 public class VerifyEncryptedJwt extends VerifyBase implements Execution {
   private static final long defaultTimeAllowance = 0L;
@@ -99,7 +101,7 @@ public class VerifyEncryptedJwt extends VerifyBase implements Execution {
     EncryptedJWT encryptedJWT = EncryptedJWT.parse(jweText);
     JWEDecrypter decrypter = null;
     if(policyConfig.cek != null) {
-      decrypter = new DirectDecrypter(policyConfig.cek, true);
+      decrypter = new DirectDecrypter(KeyUtil.generateSecretKey(policyConfig.cek), true);
       encryptedJWT.decrypt(decrypter);
     } else {
       decrypter = new RSADecrypter(policyConfig.privateKey, policyConfig.deferredCritHeaders);

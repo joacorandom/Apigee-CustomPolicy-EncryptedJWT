@@ -28,6 +28,17 @@ Changes over original implementation:
   
 # Additional example of using CEK parameter for decryption
 
+  ```xml
+  <JavaCallout name="Java-JWTVerification1">
+    <Properties>
+      <Property name='key-encryption'>RSA-OAEP-256</Property>
+      <Property name='content-encryption'>A256GCM</Property>
+      <Property name='cek'>{cek}</Property>
+    </Properties>
+    <ClassName>com.google.apigee.callouts.VerifyEncryptedJwt</ClassName>
+    <ResourceURL>java://apigee-callout-encrypted-jwt-20211021.jar</ResourceURL>
+  </JavaCallout>
+  ```
  # JWE and Encrypted JWT callout
 
 For several years, Apigee has included builtin  policies that generate and

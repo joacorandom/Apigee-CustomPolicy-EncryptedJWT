@@ -73,17 +73,19 @@ public abstract class VerifyBase extends EncryptedJoseBase implements Execution 
     public RSAPrivateKey privateKey;
     public Set<String> deferredCritHeaders;
     public String source;
-    public SecretKey cek;
+    public String cek;
   }
 
   PolicyConfig getPolicyConfiguration(MessageContext msgCtxt) throws Exception {
     PolicyConfig config = new PolicyConfig();
     config.keyEncryptionAlgorithm = getKeyEncryption(msgCtxt);
     config.contentEncryptionAlgorithm = getContentEncryption(msgCtxt);
-    config.privateKey = (RSAPrivateKey) getPrivateKey(msgCtxt);
     config.deferredCritHeaders = getDeferredCriticalHeaders(msgCtxt);
     config.source = getSourceVar();
-    config.cek = getCEK(msgCtxt);
+    config.cek = _getOptionalString(msgCtxt, "cek");
+    if(config.cek == null) {
+      config.privateKey = (RSAPrivateKey) getPrivateKey(msgCtxt);
+    }
     return config;
   }
 

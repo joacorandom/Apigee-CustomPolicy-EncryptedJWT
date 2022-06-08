@@ -188,7 +188,7 @@ public abstract class GenerateBase extends EncryptedJoseBase implements Executio
     public String outputVar;
     public int expiry;
     public int notBefore;
-    public SecretKey cek;
+    public String cek;
   }
 
   PolicyConfig getPolicyConfig(MessageContext msgCtxt) throws Exception {
@@ -211,7 +211,7 @@ public abstract class GenerateBase extends EncryptedJoseBase implements Executio
     config.notBefore = getNotBefore(msgCtxt);
     config.generateId = _getBooleanProperty(msgCtxt, "generate-id", false);
     config.compress = _getBooleanProperty(msgCtxt, "compress", false);
-    config.cek = getCEK(msgCtxt);
+    config.cek = _getOptionalString(msgCtxt, "cek");
     return config;
   }
 

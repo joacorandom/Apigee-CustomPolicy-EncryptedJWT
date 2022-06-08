@@ -184,14 +184,4 @@ public abstract class EncryptedJoseBase {
       msgCtxt.setVariable(varName("error"), error);
     }
   }
-  
-  public SecretKey getCEK(MessageContext msgCtxt) throws Exception {
-    String encodedKey = _getOptionalString(msgCtxt, "cek");
-    if(encodedKey != null) {
-      byte[] decodedKey = Base64.getDecoder().decode(encodedKey);
-      return new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES"); 
-    } else {
-      return null;
-    }
-  }
 }

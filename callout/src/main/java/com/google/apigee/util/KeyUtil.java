@@ -16,10 +16,13 @@ package com.google.apigee.util;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Base64;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMDecryptorProvider;
 import org.bouncycastle.openssl.PEMEncryptedKeyPair;
@@ -120,4 +123,8 @@ public class KeyUtil {
     throw new IllegalStateException("unknown PEM object");
   }
 
+  public static SecretKey generateSecretKey(String key) throws IllegalArgumentException {
+    byte[] decodedKey = Base64.getDecoder().decode(key);
+    return new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES"); 
+  }
 }

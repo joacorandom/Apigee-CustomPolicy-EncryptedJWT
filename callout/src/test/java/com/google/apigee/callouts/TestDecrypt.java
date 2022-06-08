@@ -305,9 +305,9 @@ public class TestDecrypt extends CalloutTestBase {
   public void decrypt9_with_CEK_128bit() {
     Map<String, String> properties = new HashMap<String, String>();
     properties.put("testname", "decrypt9");
-    properties.put("private-key", privateKey1);
     properties.put("key-encryption", "RSA-OAEP");
-    //properties.put("cek", cek_128bit);
+    properties.put("cek", cek_128bit);
+
     properties.put("source", "message.content");
     properties.put("debug", "true");
 
@@ -320,17 +320,17 @@ public class TestDecrypt extends CalloutTestBase {
     reportThings("ejwt", properties);
     Assert.assertEquals(result, ExecutionResult.SUCCESS);
     // retrieve output
-    //String error = msgCtxt.getVariable("ejwt_error");
-    //Assert.assertEquals(error, "JWT uses unacceptable Content Encryption Algorithm.");
+    String error = msgCtxt.getVariable("ejwt_error");
+    Assert.assertNull(error);
   }
 
   @Test()
   public void decrypt10_with_CEK_256bit() {
     Map<String, String> properties = new HashMap<String, String>();
     properties.put("testname", "decrypt10");
-    properties.put("private-key", privateKey1);
     properties.put("key-encryption", "RSA-OAEP-256");
-    //properties.put("cek", cek_256bit);
+    properties.put("cek", cek_256bit);
+
     properties.put("source", "message.content");
     properties.put("debug", "true");
 
@@ -343,7 +343,7 @@ public class TestDecrypt extends CalloutTestBase {
     reportThings("ejwt", properties);
     Assert.assertEquals(result, ExecutionResult.SUCCESS);
     // retrieve output
-    //String error = msgCtxt.getVariable("ejwt_error");
-    //Assert.assertEquals(error, "JWT uses unacceptable Content Encryption Algorithm.");
+    String error = msgCtxt.getVariable("ejwt_error");
+    Assert.assertNull(error);
   }
 }

@@ -40,6 +40,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
+import com.google.apigee.util.KeyUtil;
+
 @IOIntensive
 public class GenerateEncryptedJwt extends GenerateBase implements Execution {
   public GenerateEncryptedJwt(Map properties) {
@@ -108,8 +110,14 @@ public class GenerateEncryptedJwt extends GenerateBase implements Execution {
     msgCtxt.setVariable(varName("payload"), claims.toString());
 
     EncryptedJWT encryptedJWT = new EncryptedJWT(header, claims);
-    RSAEncrypter encrypter = new RSAEncrypter((RSAPublicKey) policyConfig.publicKey);
+    RSAEncrypter encrypter = null;
 
+    if(policyConfig.cek != null) {
+      encrypter = new RSAEncrypter((RSAPublicKey) policyConfig.publicKey, KeyUtil.generateSecretKey(policyConfig.cek));
+    } else {
+      encrypter = new RSAEncrypter((RSAPublicKey) policyConfig.publicKey);
+    }
+    
     encryptedJWT.encrypt(encrypter);
     String serialized = encryptedJWT.serialize();
     msgCtxt.setVariable(policyConfig.outputVar, serialized);
