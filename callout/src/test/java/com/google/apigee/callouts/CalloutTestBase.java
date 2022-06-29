@@ -295,6 +295,9 @@ public abstract class CalloutTestBase {
     String enc = msgCtxt.getVariable(prefix + "_enc");
     System.out.println("enc: " + enc);
 
+    String cek = msgCtxt.getVariable(prefix + "_cek");
+    System.out.println("cek: " + cek);
+
     String error = msgCtxt.getVariable(prefix + "_error");
     System.out.println("error : " + error);
   }

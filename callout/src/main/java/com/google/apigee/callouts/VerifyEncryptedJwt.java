@@ -28,7 +28,6 @@ import com.apigee.flow.message.MessageContext;
 import com.google.apigee.util.TimeResolver;
 import com.nimbusds.jose.JWEDecrypter;
 import com.nimbusds.jose.JWEHeader;
-import com.nimbusds.jose.crypto.DirectDecrypter;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -37,6 +36,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Map;
+import javax.crypto.SecretKey;
 
 import com.google.apigee.util.KeyUtil;
 
@@ -99,14 +99,8 @@ public class VerifyEncryptedJwt extends VerifyBase implements Execution {
       jweText = jweText.substring(7);
     }
     EncryptedJWT encryptedJWT = EncryptedJWT.parse(jweText);
-    JWEDecrypter decrypter = null;
-    if(policyConfig.cek != null) {
-      decrypter = new DirectDecrypter(KeyUtil.generateSecretKey(policyConfig.cek), true);
-      encryptedJWT.decrypt(decrypter);
-    } else {
-      decrypter = new RSADecrypter(policyConfig.privateKey, policyConfig.deferredCritHeaders);
-      encryptedJWT.decrypt(decrypter);
-    }
+    JWEDecrypter decrypter =  new RSADecrypter(policyConfig.privateKey, policyConfig.deferredCritHeaders);
+    encryptedJWT.decrypt(decrypter);
 
     if (encryptedJWT.getPayload() != null) {
       String payload = encryptedJWT.getPayload().toString();
@@ -133,7 +127,10 @@ public class VerifyEncryptedJwt extends VerifyBase implements Execution {
       if (!header.getEncryptionMethod().toString().equals(policyConfig.contentEncryptionAlgorithm))
         throw new IllegalStateException("JWT uses unacceptable Content Encryption Algorithm.");
     }
-
+    
+    SecretKey cek = KeyUtil.getCEK(header, encryptedJWT.getEncryptedKey(), policyConfig.privateKey, decrypter.getJCAContext());
+    msgCtxt.setVariable(varName("cek"), KeyUtil.secretKeyToString(cek));
+    
     long timeAllowance = getTimeAllowance(msgCtxt);
     long maxLifetime = getMaxAllowableLifetime(msgCtxt);
 

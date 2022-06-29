@@ -17,12 +17,22 @@ package com.google.apigee.util;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Base64;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
+import static com.nimbusds.jose.jwk.gen.RSAKeyGenerator.MIN_KEY_SIZE_BITS;
+
+import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.impl.*;
+import com.nimbusds.jose.jca.JWEJCAContext;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.util.Base64URL;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMDecryptorProvider;
 import org.bouncycastle.openssl.PEMEncryptedKeyPair;
@@ -123,8 +133,72 @@ public class KeyUtil {
     throw new IllegalStateException("unknown PEM object");
   }
 
+  public static SecretKey getCEK(final JWEHeader header,
+    final Base64URL encryptedKey,
+    final PrivateKey privateKey,
+    final JWEJCAContext jweJCAContext) 
+    throws JOSEException  {
+
+		Set<JWEAlgorithm> algs = new LinkedHashSet<>();
+		algs.add(JWEAlgorithm.RSA1_5);
+		algs.add(JWEAlgorithm.RSA_OAEP);
+		algs.add(JWEAlgorithm.RSA_OAEP_256);
+		algs.add(JWEAlgorithm.RSA_OAEP_512);
+    
+		// Derive the content encryption key
+		JWEAlgorithm alg = header.getAlgorithm();
+		SecretKey cek;
+		if (alg.equals(JWEAlgorithm.RSA1_5)) {
+
+			int keyLength = header.getEncryptionMethod().cekBitLength();
+
+			// Protect against MMA attack by generating random CEK to be used on decryption failure,
+			// see http://www.ietf.org/mail-archive/web/jose/current/msg01832.html
+			final SecretKey randomCEK = ContentCryptoProvider.generateCEK(header.getEncryptionMethod(), jweJCAContext.getSecureRandom());
+
+      Exception cekDecryptionException;
+			try {
+				cek = RSA1_5.decryptCEK(privateKey, encryptedKey.decode(), keyLength, jweJCAContext.getKeyEncryptionProvider());
+
+				if (cek == null) {
+					// CEK length mismatch, signalled by null instead of
+					// exception to prevent MMA attack
+					cek = randomCEK;
+				}
+
+			} catch (Exception e) {
+				// continue
+				cekDecryptionException = e;
+				cek = randomCEK;
+			}
+			
+			cekDecryptionException = null;
+		
+		} else if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
+
+			cek = RSA_OAEP.decryptCEK(privateKey, encryptedKey.decode(), jweJCAContext.getKeyEncryptionProvider());
+
+		} else if (alg.equals(JWEAlgorithm.RSA_OAEP_256)) {
+			
+			cek = RSA_OAEP_256.decryptCEK(privateKey, encryptedKey.decode(), jweJCAContext.getKeyEncryptionProvider());
+			
+		} else if (alg.equals(JWEAlgorithm.RSA_OAEP_512)){
+
+			cek = RSA_OAEP_512.decryptCEK(privateKey, encryptedKey.decode(), jweJCAContext.getKeyEncryptionProvider());
+
+		} else {
+		
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWEAlgorithm(alg, algs));
+		}
+
+    return cek;
+  }
   public static SecretKey generateSecretKey(String key) throws IllegalArgumentException {
     byte[] decodedKey = Base64.getDecoder().decode(key);
     return new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES"); 
+  }
+
+  public static String secretKeyToString(SecretKey key) {
+    return Base64.getEncoder().encodeToString(key.getEncoded());
   }
 }
