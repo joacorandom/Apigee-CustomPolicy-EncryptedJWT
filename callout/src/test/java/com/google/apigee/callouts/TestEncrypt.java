@@ -309,7 +309,8 @@ public class TestEncrypt extends CalloutTestBase {
     Assert.assertTrue(lengths[0] > lengths[1]);
   }
 
-  @Test()
+  //TODO: Find another jkws service
+  @Test(enabled = false)
   public void encrypt8_JWE_via_JWKS() throws MalformedURLException, IOException, ParseException {
     Map<String, String> properties = new HashMap<String, String>();
 
@@ -344,7 +345,8 @@ public class TestEncrypt extends CalloutTestBase {
     Assert.assertNotNull(output);
   }
 
-  @Test()
+  //TODO: Find another jkws service
+  @Test(enabled = false)
   public void encrypt9_JWE_via_JWKS_no_keyid() {
     Map<String, String> properties = new HashMap<String, String>();
 
@@ -406,7 +408,8 @@ public class TestEncrypt extends CalloutTestBase {
     Assert.assertNull(output);
   }
 
-  @Test()
+  //TODO: Find another jkws service
+  @Test(enabled = false)
   public void encrypt11_JWE_bad_JWKS() throws MalformedURLException, IOException, ParseException {
     Map<String, String> properties = new HashMap<String, String>();
 
@@ -442,7 +445,8 @@ public class TestEncrypt extends CalloutTestBase {
     Assert.assertNull(output);
   }
 
-  @Test()
+  //TODO: Find another jkws service
+  @Test(enabled = false)
   public void encrypt12_JWE_static_JWKS() throws MalformedURLException, IOException, ParseException {
     RestrictedResourceRetriever resourceRetriever = new DefaultResourceRetriever(4000,3000,10240);
     Resource resource = resourceRetriever.retrieveResource(new URL("https://jwks-service.appspot.com/.well-known/jwks.json"));

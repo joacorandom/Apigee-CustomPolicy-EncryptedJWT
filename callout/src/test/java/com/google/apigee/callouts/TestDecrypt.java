@@ -62,6 +62,9 @@ public class TestDecrypt extends CalloutTestBase {
     // retrieve output
     String error = msgCtxt.getVariable("ejwt_error");
     Assert.assertNull(error);
+
+    String cek = msgCtxt.getVariable("ejwt_cek");
+    Assert.assertNotNull(cek);
   }
 
   @Test()
@@ -157,6 +160,9 @@ public class TestDecrypt extends CalloutTestBase {
     String payload = msgCtxt.getVariable("jwe_payload");
     Assert.assertNotNull(payload);
     Assert.assertTrue(payload.startsWith("eyJhbGciOiJSUzI1NiIsImtpZCI6"));
+
+    String cek = msgCtxt.getVariable("jwe_cek");
+    Assert.assertNotNull(cek);
   }
 
   @Test()
@@ -219,6 +225,8 @@ public class TestDecrypt extends CalloutTestBase {
     Assert.assertEquals(result2, ExecutionResult.SUCCESS);
     String error2 = msgCtxt.getVariable("ejwt_error");
     Assert.assertNull(error2);
+    String cek2 = msgCtxt.getVariable("ejwt_cek");
+    Assert.assertNotNull(cek2);
 
     /* ----- Verify, enforcing a max lifetime, which is exceeded ----- */
     Map<String, String> properties3 = new HashMap<String, String>();
@@ -252,6 +260,8 @@ public class TestDecrypt extends CalloutTestBase {
     Assert.assertEquals(result4, ExecutionResult.SUCCESS);
     String error4 = msgCtxt.getVariable("ejwt_error");
     Assert.assertNull(error4);
+    String cek4 = msgCtxt.getVariable("ejwt_cek");
+    Assert.assertNotNull(cek4);
   }
 
   @Test()

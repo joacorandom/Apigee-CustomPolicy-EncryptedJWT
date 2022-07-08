@@ -25,10 +25,13 @@ package com.google.apigee.callouts;
 import com.apigee.flow.execution.IOIntensive;
 import com.apigee.flow.execution.spi.Execution;
 import com.apigee.flow.message.MessageContext;
+import com.google.apigee.util.KeyUtil;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import java.util.Map;
+
+import javax.crypto.SecretKey;
 
 @IOIntensive
 public class VerifyJwe extends VerifyBase implements Execution {
@@ -74,5 +77,9 @@ public class VerifyJwe extends VerifyBase implements Execution {
       if (!header.getEncryptionMethod().toString().equals(policyConfig.contentEncryptionAlgorithm))
         throw new IllegalStateException("JWT uses unacceptable Content Encryption Algorithm.");
     }
+    
+    SecretKey cek = KeyUtil.getCEK(header, jwe.getEncryptedKey(), policyConfig.privateKey, decrypter.getJCAContext());
+    msgCtxt.setVariable(varName("cek"), KeyUtil.secretKeyToString(cek));
+    
   }
 }
