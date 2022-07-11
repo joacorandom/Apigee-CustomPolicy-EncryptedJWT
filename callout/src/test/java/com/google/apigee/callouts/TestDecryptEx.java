@@ -163,7 +163,7 @@ public class TestDecryptEx extends CalloutTestBase {
 
     // check result and output
     reportThings("ejwt", properties);
-    Assert.assertEquals(result, ExecutionResult.ABORT);
+    Assert.assertEquals(result, ExecutionResult.SUCCESS);
     // retrieve output
     String error = msgCtxt.getVariable("ejwt_error");
     Assert.assertNotNull(error);
@@ -193,7 +193,7 @@ public class TestDecryptEx extends CalloutTestBase {
 
     // check result and output
     reportThings("ejwt", properties);
-    Assert.assertEquals(result, ExecutionResult.ABORT);
+    Assert.assertEquals(result, ExecutionResult.SUCCESS);
     // retrieve output
     String error = msgCtxt.getVariable("ejwt_error");
     Assert.assertNotNull(error);

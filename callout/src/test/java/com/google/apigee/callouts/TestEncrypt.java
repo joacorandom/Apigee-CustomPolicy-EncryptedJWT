@@ -153,7 +153,7 @@ public class TestEncrypt extends CalloutTestBase {
 
     // check result and output
     reportThings("ejwt", properties);
-    Assert.assertEquals(result, ExecutionResult.ABORT);
+    Assert.assertEquals(result, ExecutionResult.SUCCESS);
     // retrieve output
     String error = msgCtxt.getVariable("ejwt_error");
     Assert.assertEquals(error, "missing content-encryption.");
@@ -399,7 +399,7 @@ public class TestEncrypt extends CalloutTestBase {
 
     // check result and output
     reportThings("jwe", properties);
-    Assert.assertEquals(result, ExecutionResult.ABORT);
+    Assert.assertEquals(result, ExecutionResult.SUCCESS);
     // retrieve output
     String error = msgCtxt.getVariable("jwe_error");
     Assert.assertNotNull(error);
@@ -436,7 +436,7 @@ public class TestEncrypt extends CalloutTestBase {
 
     // check result and output
     reportThings("jwe", properties);
-    Assert.assertEquals(result, ExecutionResult.ABORT);
+    Assert.assertEquals(result, ExecutionResult.SUCCESS);
     // retrieve output
     String error = msgCtxt.getVariable("jwe_error");
     Assert.assertNotNull(error);
