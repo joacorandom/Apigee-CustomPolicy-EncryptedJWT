@@ -99,7 +99,6 @@ public abstract class VerifyBase extends EncryptedJoseBase implements Execution 
         msgCtxt.setVariable(varName("stacktrace"), stacktrace);
       }
       setExceptionVariables(e, msgCtxt);
-      return ExecutionResult.ABORT;
     }
     return ExecutionResult.SUCCESS;
   }

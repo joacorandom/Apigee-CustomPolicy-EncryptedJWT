@@ -228,7 +228,6 @@ public abstract class GenerateBase extends EncryptedJoseBase implements Executio
         msgCtxt.setVariable(varName("stacktrace"), getStackTraceAsString(e));
       }
       setExceptionVariables(e, msgCtxt);
-      return ExecutionResult.ABORT;
     }
     return ExecutionResult.SUCCESS;
   }

@@ -84,7 +84,7 @@ public class TestDecrypt extends CalloutTestBase {
 
     // check result and output
     reportThings("ejwt", properties);
-    Assert.assertEquals(result, ExecutionResult.ABORT);
+    Assert.assertEquals(result, ExecutionResult.SUCCESS);
     // retrieve output
     String error = msgCtxt.getVariable("ejwt_error");
     Assert.assertEquals(error, "JWT uses unacceptable Content Encryption Algorithm.");
@@ -107,7 +107,7 @@ public class TestDecrypt extends CalloutTestBase {
 
     // check result and output
     reportThings("ejwt", properties);
-    Assert.assertEquals(result, ExecutionResult.ABORT);
+    Assert.assertEquals(result, ExecutionResult.SUCCESS);
     // retrieve output
     String error = msgCtxt.getVariable("ejwt_error");
     Assert.assertEquals(error, "that key-encryption algorithm name is unsupported.");
@@ -129,7 +129,7 @@ public class TestDecrypt extends CalloutTestBase {
 
     // check result and output
     reportThings("ejwt", properties);
-    Assert.assertEquals(result, ExecutionResult.ABORT);
+    Assert.assertEquals(result, ExecutionResult.SUCCESS);
     // retrieve output
     String error = msgCtxt.getVariable("ejwt_error");
     Assert.assertEquals(error, "JWT is expired.");
@@ -181,7 +181,7 @@ public class TestDecrypt extends CalloutTestBase {
 
     // check result and output
     reportThings("jwe", properties);
-    Assert.assertEquals(result, ExecutionResult.ABORT);
+    Assert.assertEquals(result, ExecutionResult.SUCCESS);
     // retrieve output
     String error = msgCtxt.getVariable("jwe_error");
     Assert.assertEquals(error, "Decryption error");
@@ -240,7 +240,7 @@ public class TestDecrypt extends CalloutTestBase {
     VerifyEncryptedJwt callout3 = new VerifyEncryptedJwt(properties3);
     ExecutionResult result3 = callout3.execute(msgCtxt, exeCtxt);
     reportThings("ejwt", properties3);
-    Assert.assertEquals(result3, ExecutionResult.ABORT);
+    Assert.assertEquals(result3, ExecutionResult.SUCCESS);
     String error3 = msgCtxt.getVariable("ejwt_error");
     Assert.assertNotNull(error3);
     Assert.assertEquals(error3, "the JWT has a lifetime that exceeds the configured limit.");
@@ -303,7 +303,7 @@ public class TestDecrypt extends CalloutTestBase {
 
     // check result and output
     reportThings("ejwt", properties2);
-    Assert.assertEquals(result2, ExecutionResult.ABORT);
+    Assert.assertEquals(result2, ExecutionResult.SUCCESS);
     // retrieve output
     String error2 = msgCtxt.getVariable("ejwt_error");
     Assert.assertNotNull(error2);
